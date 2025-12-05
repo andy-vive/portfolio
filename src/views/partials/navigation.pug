@@ -1,0 +1,15 @@
+nav.navigation
+  .container
+    button.mobile-menu-toggle(type="button" aria-label="Toggle menu")
+      span.hamburger
+    ul.nav-menu
+      li
+        a(href="/" class=(title && title.includes('Home') ? 'active' : '')) Home
+      li
+        a(href="/projects" class=(title && title.includes('Projects') ? 'active' : '')) Projects
+      li
+        a(href="/skills" class=(title && title.includes('Skills') ? 'active' : '')) Skills
+      li
+        a(href="/experience" class=(title && title.includes('Experience') ? 'active' : '')) Experience
+      li
+        a(href="/achievements" class=(title && title.includes('Achievements') ? 'active' : '')) Achievements

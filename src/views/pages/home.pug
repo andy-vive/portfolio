@@ -1,0 +1,36 @@
+extends ../layouts/main
+
+include ../partials/project-card
+include ../partials/achievement-card
+
+block content
+  section.hero
+    .container
+      .hero-content
+        h1 Pham The Duy
+        h2 Software Engineer
+        p.intro Welcome to my portfolio. I'm a passionate software engineer with expertise in building scalable web applications.
+
+  section.recent-projects
+    .container
+      h2.section-title Recent Projects
+      if projects && projects.length > 0
+        .projects-grid
+          each project in projects
+            +project-card(project)
+        .section-footer
+          a.btn.btn-link(href="/projects") View All Projects →
+      else
+        p.empty-state No projects available yet.
+
+  section.recent-achievements
+    .container
+      h2.section-title Recent Achievements
+      if achievements && achievements.length > 0
+        .achievements-grid
+          each achievement in achievements
+            +achievement-card(achievement)
+        .section-footer
+          a.btn.btn-link(href="/achievements") View All Achievements →
+      else
+        p.empty-state No achievements available yet.

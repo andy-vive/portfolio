@@ -1,0 +1,72 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Admin Dashboard - Portfolio
+    link(rel="stylesheet" href="/css/main.css")
+    link(rel="stylesheet" href="/css/admin.css")
+  body.admin-page
+    include ../partials/admin-header
+
+    .admin-container
+      aside.admin-sidebar
+        nav.admin-nav
+          a.nav-item(href="/admin/dashboard" class="active")
+            span Dashboard
+          a.nav-item(href="/admin/projects")
+            span Projects
+          a.nav-item(href="/admin/achievements")
+            span Achievements
+          a.nav-item(href="/")
+            span View Site
+          a.nav-item.logout(href="/admin/logout")
+            span Logout
+
+      main.admin-main
+        .admin-header
+          h1 Dashboard
+          p Welcome back! Here's an overview of your portfolio.
+
+        .dashboard-stats
+          .stat-card
+            .stat-number= stats.totalProjects || 0
+            .stat-label Total Projects
+            a.stat-link(href="/admin/projects") View All →
+
+          .stat-card
+            .stat-number= stats.totalAchievements || 0
+            .stat-label Total Achievements
+            a.stat-link(href="/admin/achievements") View All →
+
+          .stat-card
+            .stat-number= stats.recentProjects || 0
+            .stat-label Recent Projects
+            .stat-sublabel (Last 30 days)
+
+          .stat-card
+            .stat-number= stats.recentAchievements || 0
+            .stat-label Recent Achievements
+            .stat-sublabel (Last 30 days)
+
+        .dashboard-actions
+          h2 Quick Actions
+          .action-grid
+            a.action-card(href="/admin/projects/create")
+              h3 + New Project
+              p Add a new project to your portfolio
+
+            a.action-card(href="/admin/achievements/create")
+              h3 + New Achievement
+              p Record a new achievement
+
+            a.action-card(href="/admin/projects")
+              h3 Manage Projects
+              p View and edit existing projects
+
+            a.action-card(href="/admin/achievements")
+              h3 Manage Achievements
+              p View and edit achievements
+
+    script(src="/js/main.js")
+    script(src="/js/admin.js")

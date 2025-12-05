@@ -1,0 +1,162 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title= (achievement ? 'Edit' : 'Create') + ' Achievement - Admin'
+    link(rel="stylesheet" href="/css/main.css")
+    link(rel="stylesheet" href="/css/admin.css")
+  body.admin-page
+    include ../partials/admin-header
+
+    .admin-container
+      aside.admin-sidebar
+        nav.admin-nav
+          a.nav-item(href="/admin/projects")
+            span Projects
+          a.nav-item(href="/admin/achievements" class="active")
+            span Achievements
+          a.nav-item(href="/")
+            span View Site
+          a.nav-item.logout(href="/admin/logout")
+            span Logout
+
+      main.admin-main
+        .admin-header
+          h1= achievement ? 'Edit Achievement' : 'Create New Achievement'
+          a.btn.btn-secondary(href="/admin/achievements") &larr; Back to Achievements
+
+        if error
+          .alert.alert-error= error
+
+        form.admin-form#achievementForm
+          .form-group
+            label(for="title") Title *
+            input#title.form-input(
+              type="text"
+              name="title"
+              required
+              value=achievement ? achievement.title : ''
+              placeholder="Achievement title"
+            )
+
+          .form-group
+            label(for="description") Description *
+            textarea#description.form-textarea(
+              name="description"
+              rows="4"
+              required
+              placeholder="Describe the achievement"
+            )= achievement ? achievement.description : ''
+
+          .form-row
+            .form-group
+              label(for="dateAchieved") Date Achieved *
+              input#dateAchieved.form-input(
+                type="date"
+                name="dateAchieved"
+                required
+                value=achievement && achievement.dateAchieved ? new Date(achievement.dateAchieved).toISOString().split('T')[0] : ''
+              )
+
+            .form-group
+              label(for="timeOfAchievement") Time of Achievement *
+              input#timeOfAchievement.form-input(
+                type="text"
+                name="timeOfAchievement"
+                required
+                value=achievement ? achievement.timeOfAchievement : ''
+                placeholder="e.g., Q1 2024, During internship"
+              )
+
+          .form-row
+            .form-group
+              label(for="category") Category
+              input#category.form-input(
+                type="text"
+                name="category"
+                value=achievement ? achievement.category : ''
+                placeholder="e.g., Award, Certification, Milestone"
+              )
+
+            .form-group
+              label(for="projectId") Related Project
+              select#projectId.form-select(name="projectId")
+                option(value="") None
+                if projects
+                  each project in projects
+                    option(
+                      value=project.id
+                      selected=achievement && achievement.projectId === project.id
+                    )= project.title
+
+          .form-group
+            label(for="tags") Tags
+            input#tags.form-input(
+              type="text"
+              name="tags"
+              value=achievement && achievement.tags ? achievement.tags.join(', ') : ''
+              placeholder="Comma-separated list (e.g., React, Performance, Award)"
+            )
+            small.form-help Separate multiple tags with commas
+
+          .form-group
+            label(for="proofUrl") Proof URL
+            input#proofUrl.form-input(
+              type="url"
+              name="proofUrl"
+              value=achievement ? achievement.proofUrl : ''
+              placeholder="https://example.com/proof"
+            )
+            small.form-help Link to certificate, article, or other proof
+
+          .form-actions
+            button.btn.btn-primary(type="submit")= achievement ? 'Update Achievement' : 'Create Achievement'
+            a.btn.btn-secondary(href="/admin/achievements") Cancel
+
+    script(src="/js/api.js")
+    script(src="/js/main.js")
+    script(src="/js/admin.js")
+    script.
+      document.getElementById('achievementForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const formData = new FormData(this);
+        const data = {
+          title: formData.get('title'),
+          description: formData.get('description'),
+          dateAchieved: formData.get('dateAchieved'),
+          timeOfAchievement: formData.get('timeOfAchievement'),
+          category: formData.get('category') || undefined,
+          projectId: formData.get('projectId') ? parseInt(formData.get('projectId')) : undefined,
+          tags: formData.get('tags')
+            ? formData.get('tags').split(',').map(t => t.trim()).filter(t => t)
+            : undefined,
+          proofUrl: formData.get('proofUrl') || undefined
+        };
+
+        const achievementId = '#{achievement ? achievement.id : ""}';
+
+        // Show loading state
+        setButtonLoading(submitBtn, true);
+
+        try {
+          // Use API module
+          if (achievementId) {
+            await API.achievements.update(achievementId, data);
+            showToast('Achievement updated successfully!', 'success');
+          } else {
+            await API.achievements.create(data);
+            showToast('Achievement created successfully!', 'success');
+          }
+
+          // Redirect after short delay
+          setTimeout(() => {
+            window.location.href = '/admin/achievements';
+          }, 1000);
+        } catch (error) {
+          showToast(error.message || 'Failed to save achievement', 'error');
+          setButtonLoading(submitBtn, false);
+        }
+      });

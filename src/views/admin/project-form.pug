@@ -1,0 +1,169 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title= (project ? 'Edit' : 'Create') + ' Project - Admin'
+    link(rel="stylesheet" href="/css/main.css")
+    link(rel="stylesheet" href="/css/admin.css")
+  body.admin-page
+    include ../partials/admin-header
+
+    .admin-container
+      aside.admin-sidebar
+        nav.admin-nav
+          a.nav-item(href="/admin/projects" class="active")
+            span Projects
+          a.nav-item(href="/admin/achievements")
+            span Achievements
+          a.nav-item(href="/")
+            span View Site
+          a.nav-item.logout(href="/admin/logout")
+            span Logout
+
+      main.admin-main
+        .admin-header
+          h1= project ? 'Edit Project' : 'Create New Project'
+          a.btn.btn-secondary(href="/admin/projects") &larr; Back to Projects
+
+        if error
+          .alert.alert-error= error
+
+        form.admin-form#projectForm
+          .form-row
+            .form-group
+              label(for="title") Title *
+              input#title.form-input(
+                type="text"
+                name="title"
+                required
+                value=project ? project.title : ''
+                placeholder="Project title"
+              )
+
+            .form-group
+              label(for="company") Company
+              input#company.form-input(
+                type="text"
+                name="company"
+                value=project ? project.company : ''
+                placeholder="Company name"
+              )
+
+          .form-group
+            label(for="description") Description
+            textarea#description.form-textarea(
+              name="description"
+              rows="4"
+              placeholder="Project description"
+            )= project ? project.description : ''
+
+          .form-row
+            .form-group
+              label(for="startDate") Start Date
+              input#startDate.form-input(
+                type="date"
+                name="startDate"
+                value=project && project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : ''
+              )
+
+            .form-group
+              label(for="endDate") End Date
+              input#endDate.form-input(
+                type="date"
+                name="endDate"
+                value=project && project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : ''
+              )
+
+          .form-row
+            .form-group
+              label(for="teamSize") Team Size
+              input#teamSize.form-input(
+                type="number"
+                name="teamSize"
+                min="1"
+                value=project ? project.teamSize : ''
+                placeholder="Number of team members"
+              )
+
+            .form-group
+              label(for="role") Your Role
+              input#role.form-input(
+                type="text"
+                name="role"
+                value=project ? project.role : ''
+                placeholder="Your role in the project"
+              )
+
+          .form-group
+            label(for="technologies") Technologies
+            input#technologies.form-input(
+              type="text"
+              name="technologies"
+              value=project && project.technologies ? project.technologies.join(', ') : ''
+              placeholder="Comma-separated list (e.g., React, Node.js, MySQL)"
+            )
+            small.form-help Separate multiple technologies with commas
+
+          .form-group
+            label(for="responsibilities") Key Responsibilities
+            textarea#responsibilities.form-textarea(
+              name="responsibilities"
+              rows="4"
+              placeholder="One responsibility per line"
+            )= project && project.responsibilities ? project.responsibilities.join('\n') : ''
+            small.form-help Enter one responsibility per line
+
+          .form-actions
+            button.btn.btn-primary(type="submit")= project ? 'Update Project' : 'Create Project'
+            a.btn.btn-secondary(href="/admin/projects") Cancel
+
+    script(src="/js/api.js")
+    script(src="/js/main.js")
+    script(src="/js/admin.js")
+    script.
+      document.getElementById('projectForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const formData = new FormData(this);
+        const data = {
+          title: formData.get('title'),
+          company: formData.get('company') || undefined,
+          description: formData.get('description') || undefined,
+          startDate: formData.get('startDate') || undefined,
+          endDate: formData.get('endDate') || undefined,
+          teamSize: formData.get('teamSize') ? parseInt(formData.get('teamSize')) : undefined,
+          role: formData.get('role') || undefined,
+          technologies: formData.get('technologies')
+            ? formData.get('technologies').split(',').map(t => t.trim()).filter(t => t)
+            : undefined,
+          responsibilities: formData.get('responsibilities')
+            ? formData.get('responsibilities').split('\n').map(r => r.trim()).filter(r => r)
+            : undefined
+        };
+
+        const projectId = '#{project ? project.id : ""}';
+
+        // Show loading state
+        setButtonLoading(submitBtn, true);
+
+        try {
+          // Use API module
+          if (projectId) {
+            await API.projects.update(projectId, data);
+            showToast('Project updated successfully!', 'success');
+          } else {
+            await API.projects.create(data);
+            showToast('Project created successfully!', 'success');
+          }
+
+          // Redirect after short delay
+          setTimeout(() => {
+            window.location.href = '/admin/projects';
+          }, 1000);
+        } catch (error) {
+          showToast(error.message || 'Failed to save project', 'error');
+          setButtonLoading(submitBtn, false);
+        }
+      });

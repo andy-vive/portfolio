@@ -1,0 +1,85 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Admin Login - Portfolio
+    link(rel="stylesheet" href="/css/main.css")
+    link(rel="stylesheet" href="/css/admin.css")
+  body.admin-login-page
+    .login-container
+      .login-card
+        .login-header
+          h1 Admin Login
+          p Portfolio Management System
+
+        if error
+          .alert.alert-error= error
+
+        .error-message(style="display: none;")
+
+        form#loginForm.login-form
+          .form-group
+            label(for="username") Username
+            input#username.form-input(
+              type="text"
+              name="username"
+              required
+              autofocus
+              placeholder="Enter your username"
+            )
+
+          .form-group
+            label(for="password") Password
+            input#password.form-input(
+              type="password"
+              name="password"
+              required
+              placeholder="Enter your password"
+            )
+
+          button#loginBtn.btn.btn-primary.btn-block(type="submit") Login
+
+        .login-footer
+          p
+            a(href="/") &larr; Back to Portfolio
+
+    script(src="/js/api.js")
+    script(src="/js/main.js")
+    script.
+      document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMessage = document.querySelector('.error-message');
+
+        // Hide previous errors
+        errorMessage.style.display = 'none';
+
+        // Disable button and show loading
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+
+        try {
+          // Call API
+          const result = await API.auth.login(username, password);
+
+          // Store tokens in localStorage
+          localStorage.setItem('accessToken', result.accessToken);
+          localStorage.setItem('refreshToken', result.refreshToken);
+
+          // Redirect to projects page
+          window.location.href = '/admin/projects';
+        } catch (error) {
+          // Show error message
+          errorMessage.textContent = error.message || 'Login failed. Please try again.';
+          errorMessage.style.display = 'block';
+          errorMessage.className = 'error-message alert alert-error';
+
+          // Re-enable button
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'Login';
+        }
+      });

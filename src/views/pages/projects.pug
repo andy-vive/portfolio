@@ -1,0 +1,39 @@
+extends ../layouts/main
+
+include ../partials/project-card
+
+block content
+  section.page-header
+    .container
+      h1 Projects
+      p Explore my portfolio of software development projects
+
+  section.projects-section
+    .container
+      if projects && projects.length > 0
+        .projects-grid
+          each project in projects
+            +project-card(project)
+
+        .pagination-container
+          if pagination && pagination.totalPages > 1
+            .pagination
+              if pagination.page > 1
+                a.pagination-link(href=`/projects?page=${pagination.page - 1}`) Previous
+
+              - var startPage = Math.max(1, pagination.page - 2)
+              - var endPage = Math.min(pagination.totalPages, pagination.page + 2)
+
+              each pageNum in Array.from({length: endPage - startPage + 1}, (_, i) => startPage + i)
+                if pageNum === pagination.page
+                  span.pagination-link.active= pageNum
+                else
+                  a.pagination-link(href=`/projects?page=${pageNum}`)= pageNum
+
+              if pagination.page < pagination.totalPages
+                a.pagination-link(href=`/projects?page=${pagination.page + 1}`) Next
+
+        .results-info
+          p Showing #{projects.length} of #{pagination.total} projects
+      else
+        p.empty-state No projects found.

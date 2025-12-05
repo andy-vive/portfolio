@@ -1,0 +1,24 @@
+mixin achievement-card(achievement)
+  .achievement-card
+    .achievement-header
+      h3.achievement-title= achievement.title
+      .achievement-meta
+        span.achievement-date= new Date(achievement.dateAchieved).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        if achievement.category
+          span.achievement-category= achievement.category
+    p.achievement-description= achievement.description
+    .achievement-details
+      .meta-item
+        strong Time:
+        span= achievement.timeOfAchievement
+      if achievement.project
+        .meta-item
+          strong Project:
+          span= achievement.project.title
+    if achievement.tags && achievement.tags.length > 0
+      .achievement-tags
+        each tag in achievement.tags
+          span.tag= tag
+    if achievement.proofUrl
+      .achievement-proof
+        a.proof-link(href=achievement.proofUrl target="_blank" rel="noopener noreferrer") View Proof

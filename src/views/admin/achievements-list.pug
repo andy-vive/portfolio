@@ -1,0 +1,124 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Manage Achievements - Admin
+    link(rel="stylesheet" href="/css/main.css")
+    link(rel="stylesheet" href="/css/admin.css")
+  body.admin-page
+    include ../partials/admin-header
+
+    .admin-container
+      aside.admin-sidebar
+        nav.admin-nav
+          a.nav-item(href="/admin/projects")
+            span Projects
+          a.nav-item(href="/admin/achievements" class="active")
+            span Achievements
+          a.nav-item(href="/")
+            span View Site
+          a.nav-item.logout(href="/admin/logout")
+            span Logout
+
+      main.admin-main
+        .admin-header
+          h1 Manage Achievements
+          a.btn.btn-primary(href="/admin/achievements/create") + New Achievement
+
+        if success
+          .alert.alert-success= success
+
+        if achievements && achievements.length > 0
+          .admin-table-container
+            table.admin-table
+              thead
+                tr
+                  th ID
+                  th Title
+                  th Category
+                  th Date Achieved
+                  th Project
+                  th Tags
+                  th Actions
+              tbody
+                each achievement in achievements
+                  tr
+                    td= achievement.id
+                    td= achievement.title
+                    td= achievement.category || '-'
+                    td= new Date(achievement.dateAchieved).toLocaleDateString()
+                    td= achievement.project ? achievement.project.title : '-'
+                    td
+                      if achievement.tags && achievement.tags.length > 0
+                        = achievement.tags.slice(0, 2).join(', ')
+                        if achievement.tags.length > 2
+                          | ...
+                      else
+                        | -
+                    td.table-actions
+                      a.btn.btn-sm.btn-secondary(href=`/admin/achievements/${achievement.id}/edit`) Edit
+                      button.btn.btn-sm.btn-danger.delete-btn(
+                        data-id=achievement.id
+                        data-title=achievement.title
+                        type="button"
+                      ) Delete
+
+          if pagination && pagination.totalPages > 1
+            .pagination
+              if pagination.page > 1
+                a.pagination-link(href=`/admin/achievements?page=${pagination.page - 1}`) Previous
+
+              - var startPage = Math.max(1, pagination.page - 2)
+              - var endPage = Math.min(pagination.totalPages, pagination.page + 2)
+
+              each pageNum in Array.from({length: endPage - startPage + 1}, (_, i) => startPage + i)
+                if pageNum === pagination.page
+                  span.pagination-link.active= pageNum
+                else
+                  a.pagination-link(href=`/admin/achievements?page=${pageNum}`)= pageNum
+
+              if pagination.page < pagination.totalPages
+                a.pagination-link(href=`/admin/achievements?page=${pagination.page + 1}`) Next
+
+          .results-info
+            p Showing #{achievements.length} of #{pagination.total} achievements
+        else
+          p.empty-state No achievements found.
+
+    script(src="/js/api.js")
+    script(src="/js/main.js")
+    script(src="/js/admin.js")
+    script.
+      // Delete achievement handler
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+          const id = this.dataset.id;
+          const title = this.dataset.title;
+
+          if (!confirm(`Are you sure you want to delete "${title}"?`)) {
+            return;
+          }
+
+          // Disable button during deletion
+          const originalText = this.textContent;
+          this.disabled = true;
+          this.textContent = 'Deleting...';
+
+          try {
+            // Use API module
+            await API.achievements.delete(id);
+            showToast(`Achievement "${title}" deleted successfully!`, 'success');
+
+            // Reload after short delay
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } catch (error) {
+            showToast(error.message || 'Failed to delete achievement', 'error');
+            // Re-enable button
+            this.disabled = false;
+            this.textContent = originalText;
+          }
+        });
+      });

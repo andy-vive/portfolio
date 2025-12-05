@@ -1,0 +1,40 @@
+mixin project-card(project)
+  .project-card
+    .project-header
+      h3.project-title= project.title
+      if project.company
+        p.project-company= project.company
+    if project.description
+      p.project-description= project.description
+    .project-meta
+      if project.role
+        .meta-item
+          strong Role:
+          span= project.role
+      if project.teamSize
+        .meta-item
+          strong Team Size:
+          span= project.teamSize
+      if project.startDate || project.endDate
+        .meta-item
+          strong Duration:
+          span
+            if project.startDate
+              = new Date(project.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+            else
+              | N/A
+            |  -
+            if project.endDate
+              = new Date(project.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+            else
+              | Present
+    if project.technologies && project.technologies.length > 0
+      .project-technologies
+        each tech in project.technologies
+          span.tech-tag= tech
+    if project.responsibilities && project.responsibilities.length > 0
+      .project-responsibilities
+        strong Key Responsibilities:
+        ul
+          each resp in project.responsibilities
+            li= resp
