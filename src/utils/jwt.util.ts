@@ -4,6 +4,7 @@ import { jwtConfig } from '../config/jwt';
 export interface JwtPayload {
   userId: number;
   username: string;
+  role: 'admin' | 'user';
 }
 
 export const generateAccessToken = (payload: JwtPayload): string => {

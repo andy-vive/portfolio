@@ -18,7 +18,7 @@ export const authenticate = (
 
     try {
       const payload = verifyToken(token);
-      (req as any).user = payload;
+      req.user = payload;
       next();
     } catch (error) {
       return unauthorizedResponse(res, 'Invalid or expired token');
@@ -26,4 +26,26 @@ export const authenticate = (
   } catch (error) {
     return unauthorizedResponse(res, 'Authentication failed');
   }
+};
+
+export const requireAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void | Response => {
+  if (!req.user) {
+    return unauthorizedResponse(res, 'Authentication required');
+  }
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      error: {
+        code: 'FORBIDDEN',
+        message: 'Admin access required',
+      },
+    });
+  }
+
+  next();
 };

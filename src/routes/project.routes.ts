@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import projectController from '../controllers/project.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate, requireAdmin } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validation.middleware';
 import {
   createProjectValidator,
@@ -31,6 +31,7 @@ router.get(
 router.post(
   '/',
   authenticate,
+  requireAdmin,
   validate(createProjectValidator),
   projectController.create
 );
@@ -38,6 +39,7 @@ router.post(
 router.put(
   '/:id',
   authenticate,
+  requireAdmin,
   validate(updateProjectValidator),
   projectController.update
 );
@@ -45,6 +47,7 @@ router.put(
 router.delete(
   '/:id',
   authenticate,
+  requireAdmin,
   projectController.delete
 );
 

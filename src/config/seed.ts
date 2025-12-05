@@ -24,20 +24,15 @@ async function seed() {
       process.exit(0);
     }
 
-    logger.info('Hashing admin password...');
     const passwordHash = await bcrypt.hash(adminPassword, saltRounds);
-
-    logger.info('Creating admin user...');
     await User.create({
       username: adminUsername,
       passwordHash,
+      role: 'admin',
       isActive: true,
     });
 
-    logger.info('Admin user created successfully!');
-    logger.info(`Username: ${adminUsername}`);
-    logger.info('Password: (check your .env file)');
-    logger.info('\n⚠️  IMPORTANT: Change the default admin password after first login!');
+    logger.info('Admin user created successfully with admin role!');
 
     process.exit(0);
   } catch (error) {

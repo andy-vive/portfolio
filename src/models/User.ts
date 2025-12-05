@@ -5,6 +5,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
   declare username: string;
   declare passwordHash: string;
+  declare role: CreationOptional<'admin' | 'user'>;
   declare isActive: CreationOptional<boolean>;
   declare lastLogin: Date | null;
   declare createdAt: CreationOptional<Date>;
@@ -31,6 +32,11 @@ User.init(
     passwordHash: {
       type: DataTypes.STRING(255),
       allowNull: false,
+    },
+    role: {
+      type: DataTypes.ENUM('admin', 'user'),
+      allowNull: false,
+      defaultValue: 'user',
     },
     isActive: {
       type: DataTypes.BOOLEAN,

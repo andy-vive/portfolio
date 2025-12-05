@@ -9,6 +9,7 @@ export interface LoginResponse {
   user: {
     id: number;
     username: string;
+    role: 'admin' | 'user';
   };
 }
 
@@ -37,6 +38,7 @@ export class AuthService {
     const payload: JwtPayload = {
       userId: user.id,
       username: user.username,
+      role: user.role,
     };
 
     const accessToken = generateAccessToken(payload);
@@ -62,6 +64,7 @@ export class AuthService {
       user: {
         id: user.id,
         username: user.username,
+        role: user.role,
       },
     };
   }

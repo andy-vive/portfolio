@@ -3,6 +3,7 @@ import { body, query } from 'express-validator';
 export const createProjectValidator = [
   body('title')
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Title is required')
     .isLength({ max: 200 })
@@ -10,11 +11,13 @@ export const createProjectValidator = [
   body('company')
     .optional()
     .trim()
+    .escape()
     .isLength({ max: 100 })
     .withMessage('Company must not exceed 100 characters'),
   body('description')
     .optional()
-    .trim(),
+    .trim()
+    .escape(),
   body('startDate')
     .optional()
     .isISO8601()
@@ -30,6 +33,7 @@ export const createProjectValidator = [
   body('role')
     .optional()
     .trim()
+    .escape()
     .isLength({ max: 100 })
     .withMessage('Role must not exceed 100 characters'),
   body('responsibilities')
@@ -39,6 +43,7 @@ export const createProjectValidator = [
   body('responsibilities.*')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Responsibility item cannot be empty'),
   body('technologies')
@@ -48,6 +53,7 @@ export const createProjectValidator = [
   body('technologies.*')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Technology item cannot be empty'),
 ];
@@ -56,6 +62,7 @@ export const updateProjectValidator = [
   body('title')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Title cannot be empty')
     .isLength({ max: 200 })
@@ -63,11 +70,13 @@ export const updateProjectValidator = [
   body('company')
     .optional()
     .trim()
+    .escape()
     .isLength({ max: 100 })
     .withMessage('Company must not exceed 100 characters'),
   body('description')
     .optional()
-    .trim(),
+    .trim()
+    .escape(),
   body('startDate')
     .optional()
     .isISO8601()
@@ -83,6 +92,7 @@ export const updateProjectValidator = [
   body('role')
     .optional()
     .trim()
+    .escape()
     .isLength({ max: 100 })
     .withMessage('Role must not exceed 100 characters'),
   body('responsibilities')
@@ -92,6 +102,7 @@ export const updateProjectValidator = [
   body('responsibilities.*')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Responsibility item cannot be empty'),
   body('technologies')
@@ -101,6 +112,7 @@ export const updateProjectValidator = [
   body('technologies.*')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Technology item cannot be empty'),
 ];
@@ -116,13 +128,16 @@ export const projectQueryValidator = [
     .withMessage('Limit must be between 1 and 100'),
   query('search')
     .optional()
-    .trim(),
+    .trim()
+    .escape(),
   query('company')
     .optional()
-    .trim(),
+    .trim()
+    .escape(),
   query('technology')
     .optional()
-    .trim(),
+    .trim()
+    .escape(),
   query('startDate')
     .optional()
     .isISO8601()

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import achievementController from '../controllers/achievement.controller';
-import { authenticate } from '../middleware/auth.middleware';
+import { authenticate, requireAdmin } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validation.middleware';
 import {
   createAchievementValidator,
@@ -26,6 +26,7 @@ router.get(
 router.post(
   '/',
   authenticate,
+  requireAdmin,
   validate(createAchievementValidator),
   achievementController.create
 );
@@ -33,6 +34,7 @@ router.post(
 router.put(
   '/:id',
   authenticate,
+  requireAdmin,
   validate(updateAchievementValidator),
   achievementController.update
 );
@@ -40,6 +42,7 @@ router.put(
 router.delete(
   '/:id',
   authenticate,
+  requireAdmin,
   achievementController.delete
 );
 

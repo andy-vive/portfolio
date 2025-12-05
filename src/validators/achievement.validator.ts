@@ -3,12 +3,14 @@ import { body, query } from 'express-validator';
 export const createAchievementValidator = [
   body('title')
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Title is required')
     .isLength({ max: 200 })
     .withMessage('Title must not exceed 200 characters'),
   body('description')
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Description is required'),
   body('dateAchieved')
@@ -18,6 +20,7 @@ export const createAchievementValidator = [
     .withMessage('Date achieved must be a valid date'),
   body('timeOfAchievement')
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Time of achievement is required')
     .isLength({ max: 50 })
@@ -25,6 +28,7 @@ export const createAchievementValidator = [
   body('category')
     .optional()
     .trim()
+    .escape()
     .isLength({ max: 50 })
     .withMessage('Category must not exceed 50 characters'),
   body('tags')
@@ -34,6 +38,7 @@ export const createAchievementValidator = [
   body('tags.*')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Tag item cannot be empty'),
   body('projectId')
@@ -53,6 +58,7 @@ export const updateAchievementValidator = [
   body('title')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Title cannot be empty')
     .isLength({ max: 200 })
@@ -60,6 +66,7 @@ export const updateAchievementValidator = [
   body('description')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Description cannot be empty'),
   body('dateAchieved')
@@ -69,6 +76,7 @@ export const updateAchievementValidator = [
   body('timeOfAchievement')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Time of achievement cannot be empty')
     .isLength({ max: 50 })
@@ -76,6 +84,7 @@ export const updateAchievementValidator = [
   body('category')
     .optional()
     .trim()
+    .escape()
     .isLength({ max: 50 })
     .withMessage('Category must not exceed 50 characters'),
   body('tags')
@@ -85,6 +94,7 @@ export const updateAchievementValidator = [
   body('tags.*')
     .optional()
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Tag item cannot be empty'),
   body('projectId')
@@ -120,10 +130,12 @@ export const achievementQueryValidator = [
     .withMessage('Limit must be between 1 and 100'),
   query('search')
     .optional()
-    .trim(),
+    .trim()
+    .escape(),
   query('category')
     .optional()
-    .trim(),
+    .trim()
+    .escape(),
   query('projectId')
     .optional()
     .isInt({ min: 1 })

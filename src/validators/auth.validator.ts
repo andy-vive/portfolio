@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 export const loginValidator = [
   body('username')
     .trim()
+    .escape()
     .notEmpty()
     .withMessage('Username is required')
     .isLength({ min: 3, max: 100 })
