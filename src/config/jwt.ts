@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Validate that JWT_SECRET is set - fail fast if missing
 if (!process.env.JWT_SECRET) {
   throw new Error(
     'FATAL: JWT_SECRET environment variable is not set. ' +

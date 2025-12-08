@@ -15,26 +15,22 @@ export interface LoginResponse {
 
 export class AuthService {
   async login(username: string, password: string): Promise<LoginResponse> {
-    // Find user by username
     const user = await User.findOne({ where: { username } });
 
     if (!user) {
       throw new AppError(401, 'INVALID_CREDENTIALS', 'Invalid username or password');
     }
 
-    // Check if user is active
     if (!user.isActive) {
       throw new AppError(403, 'ACCOUNT_DISABLED', 'Account is disabled');
     }
 
-    // Verify password
     const isPasswordValid = await comparePassword(password, user.passwordHash);
 
     if (!isPasswordValid) {
       throw new AppError(401, 'INVALID_CREDENTIALS', 'Invalid username or password');
     }
 
-    // Generate tokens
     const payload: JwtPayload = {
       userId: user.id,
       username: user.username,
@@ -44,7 +40,6 @@ export class AuthService {
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
-    // Save refresh token to database
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
@@ -54,7 +49,6 @@ export class AuthService {
       expiresAt,
     });
 
-    // Update last login
     user.lastLogin = new Date();
     await user.save();
 
@@ -70,7 +64,6 @@ export class AuthService {
   }
 
   async logout(refreshToken: string): Promise<void> {
-    // Delete the refresh token from database
     await RefreshToken.destroy({ where: { token: refreshToken } });
   }
 }

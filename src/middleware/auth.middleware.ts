@@ -14,7 +14,7 @@ export const authenticate = (
       return unauthorizedResponse(res, 'No token provided');
     }
 
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    const token = authHeader.substring(7);
 
     try {
       const payload = verifyToken(token);

@@ -4,7 +4,6 @@ import RefreshToken from './RefreshToken';
 import Project from './Project';
 import Achievement from './Achievement';
 
-// Define associations
 User.hasMany(RefreshToken, {
   foreignKey: 'userId',
   as: 'refreshTokens',

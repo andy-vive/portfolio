@@ -10,7 +10,6 @@ import {
 
 const router = Router();
 
-// Public routes - anyone can view projects
 router.get(
   '/',
   validate(projectQueryValidator),
@@ -27,7 +26,6 @@ router.get(
   projectController.getAchievements
 );
 
-// Protected routes - only authenticated admin can create/update/delete
 router.post(
   '/',
   authenticate,

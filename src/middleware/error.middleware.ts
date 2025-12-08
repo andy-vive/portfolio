@@ -34,7 +34,6 @@ export const errorHandler = (
     });
   }
 
-  // Handle Sequelize validation errors
   if (err.name === 'SequelizeValidationError') {
     const sequelizeErr = err as unknown as { errors?: Array<{ path: string; message: string }> };
     return res.status(400).json({
@@ -50,7 +49,6 @@ export const errorHandler = (
     });
   }
 
-  // Handle Sequelize unique constraint errors
   if (err.name === 'SequelizeUniqueConstraintError') {
     const sequelizeErr = err as unknown as { errors?: Array<{ path: string; message: string }> };
     return res.status(409).json({
@@ -66,7 +64,6 @@ export const errorHandler = (
     });
   }
 
-  // Default to 500 server error
   return internalErrorResponse(res, 'An unexpected error occurred');
 };
 

@@ -15,7 +15,6 @@ class Achievement extends Model<InferAttributes<Achievement>, InferCreationAttri
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
-  // Associations
   declare project?: NonAttribute<Project>;
 }
 

@@ -5,7 +5,6 @@ import { asyncHandler } from '../utils/asyncHandler.util';
 
 export class ViewController {
   home = asyncHandler(async (_req: Request, res: Response) => {
-    // Get featured projects and recent achievements for home page
     const projectsResult = await projectService.findAll({
       limit: 3,
       sortBy: 'createdAt',
@@ -84,7 +83,6 @@ export class ViewController {
     });
   });
 
-  // Admin routes
   adminLogin = asyncHandler(async (req: Request, res: Response) => {
     res.render('admin/login', {
       error: req.query.error as string,

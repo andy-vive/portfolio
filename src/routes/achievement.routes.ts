@@ -10,7 +10,6 @@ import {
 
 const router = Router();
 
-// Public routes - anyone can view achievements
 router.get(
   '/',
   validate(achievementQueryValidator),
@@ -22,7 +21,6 @@ router.get(
   achievementController.findById
 );
 
-// Protected routes - only authenticated admin can create/update/delete
 router.post(
   '/',
   authenticate,

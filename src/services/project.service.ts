@@ -33,7 +33,6 @@ export class ProjectService {
     const sortBy = params.sortBy || 'createdAt';
     const sortOrder = params.sortOrder || 'DESC';
 
-    // Build where clause
     const where: any = {};
 
     if (params.search) {
@@ -60,7 +59,6 @@ export class ProjectService {
       where.endDate = { [Op.lte]: params.endDate };
     }
 
-    // Include achievements if requested
     const include = params.includeAchievements
       ? [{ model: Achievement, as: 'achievements' }]
       : [];

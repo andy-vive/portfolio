@@ -11,7 +11,6 @@ export interface AchievementListResponse {
 
 export class AchievementService {
   async create(data: CreateAchievementDto): Promise<Achievement> {
-    // Validate project exists if projectId is provided
     if (data.projectId) {
       const project = await Project.findByPk(data.projectId);
       if (!project) {
@@ -40,7 +39,6 @@ export class AchievementService {
     const sortBy = params.sortBy || 'dateAchieved';
     const sortOrder = params.sortOrder || 'DESC';
 
-    // Build where clause
     const where: any = {};
 
     if (params.search) {
@@ -69,7 +67,6 @@ export class AchievementService {
       };
     }
 
-    // Include project if requested
     const include = params.includeProject
       ? [{ model: Project, as: 'project' }]
       : [];
@@ -113,7 +110,6 @@ export class AchievementService {
   async update(id: number, data: UpdateAchievementDto): Promise<Achievement> {
     const achievement = await this.findById(id);
 
-    // Validate project exists if projectId is provided
     if (data.projectId !== undefined && data.projectId !== null) {
       const project = await Project.findByPk(data.projectId);
       if (!project) {
